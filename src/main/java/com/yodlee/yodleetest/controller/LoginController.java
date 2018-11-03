@@ -1,6 +1,5 @@
 package com.yodlee.yodleetest.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,15 @@ public class LoginController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String cobrandAndUserLogin() {
+		long count = 0l;
 		try {
 			providerService.saveProviders();
+			count = providerService.getProvidersCount();
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			return ex.getMessage();
 		}
-		return "inserted";
+		return "inserted " + count + " records";
 	}
 
 	@RequestMapping(value = "/getprovider/{providerName}", method = RequestMethod.GET)
@@ -37,7 +38,8 @@ public class LoginController {
 		String result = "";
 		try {
 			Provider provider = providerService.getProviderByName(providerName);
-			result = provider.getId() + " " + provider.getName() + " " + provider.getCountryISOCode() + " " + provider.getCountryISOCode();
+			result = provider.getId() + " " + provider.getName() + " " + provider.getCountryISOCode() + " "
+					+ provider.getBaseUrl();
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			return ex.getMessage();
@@ -50,24 +52,23 @@ public class LoginController {
 		String result = "";
 		try {
 			Provider provider = providerService.updateProviderByName(updateProvider);
-			result = "Changed name from "+ updateProvider.getProvider().getName() + " to " + provider.getName();
+			result = "Changed name from " + updateProvider.getProvider().getName() + " to " + provider.getName();
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			return ex.getMessage();
 		}
 		return result;
 	}
-	
-	@RequestMapping(value="/getaggregateresult", method=RequestMethod.GET)
+
+	@RequestMapping(value = "/getaggregateresult", method = RequestMethod.GET)
 	public String getAggregatedResult() {
 		String str = "";
 		try {
 			List<CountryGroupResult> result = providerService.getProviderCountByCountryISOCode();
-			for(CountryGroupResult res : result) {
-				str = str + ", " + res.getCountryISOCode() + " : " + res.getTotal() + " \n"; 
+			for (CountryGroupResult res : result) {
+				str = str + ", " + res.getCountryISOCode() + " : " + res.getTotal() + " \n";
 			}
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			return ex.getMessage();
 		}

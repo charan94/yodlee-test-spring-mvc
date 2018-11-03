@@ -116,4 +116,16 @@ public class ProviderService {
 		}
 		return result;
 	}
+	
+	public long getProvidersCount() throws Exception {
+		long count = 0l;
+		try {
+			count = providerRepo.count();
+		}
+		catch(Exception ex) {
+			throw new Exception(ex.getMessage());
+		}
+		
+		return count;
+	}
 }
