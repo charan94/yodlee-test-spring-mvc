@@ -34,44 +34,35 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/getprovider/{providerName}", method = RequestMethod.GET)
-	public String getProviderByName(@PathVariable String providerName) {
-		String result = "";
+	public Provider getProviderByName(@PathVariable String providerName) {
+		Provider provider = null;
 		try {
-			Provider provider = providerService.getProviderByName(providerName);
-			result = provider.getId() + " " + provider.getName() + " " + provider.getCountryISOCode() + " "
-					+ provider.getBaseUrl();
+			provider = providerService.getProviderByName(providerName);
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
-			return ex.getMessage();
 		}
-		return result;
+		return provider;
 	}
 
 	@RequestMapping(value = "/provider/update", method = RequestMethod.POST)
-	public String updateProviderName(@RequestBody UpdateProvider updateProvider) {
-		String result = "";
+	public Provider updateProviderName(@RequestBody UpdateProvider updateProvider) {
+		Provider provider = null;
 		try {
-			Provider provider = providerService.updateProviderByName(updateProvider);
-			result = "Changed name from " + updateProvider.getProvider().getName() + " to " + provider.getName();
+			provider = providerService.updateProviderByName(updateProvider);
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
-			return ex.getMessage();
 		}
-		return result;
+		return provider;
 	}
 
 	@RequestMapping(value = "/getaggregateresult", method = RequestMethod.GET)
-	public String getAggregatedResult() {
-		String str = "";
+	public List<CountryGroupResult> getAggregatedResult() {
+		List<CountryGroupResult> result = null;
 		try {
-			List<CountryGroupResult> result = providerService.getProviderCountByCountryISOCode();
-			for (CountryGroupResult res : result) {
-				str = str + ", " + res.getCountryISOCode() + " : " + res.getTotal() + " \n";
-			}
+			result = providerService.getProviderCountByCountryISOCode();
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
-			return ex.getMessage();
 		}
-		return str;
+		return result;
 	}
 }

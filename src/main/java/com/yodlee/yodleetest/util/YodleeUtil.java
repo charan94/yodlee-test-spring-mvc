@@ -1,9 +1,14 @@
 package com.yodlee.yodleetest.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class YodleeUtil {
 
-	public static String[] getUserArray() {
-		String[] userArray = {"sbMemda357058ff848a1a9a310f496fd7f45c5a1", "sbMemda357058ff848a1a9a310f496fd7f45c5a2", "sbMemda357058ff848a1a9a310f496fd7f45c5a3", "sbMemda357058ff848a1a9a310f496fd7f45c5a4", "sbMemda357058ff848a1a9a310f496fd7f45c5a5"};
-		return userArray;
+	public static String asJsonString(final Object obj) {
+		try {
+			return new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
