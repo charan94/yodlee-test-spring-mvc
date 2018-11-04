@@ -6,6 +6,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.google.gson.Gson;
+import com.yodlee.yodleetest.dao.ProviderRepository;
 import com.yodlee.yodleetest.modal.CountryGroupResult;
 import com.yodlee.yodleetest.modal.Provider;
 import com.yodlee.yodleetest.modal.UpdateProvider;
@@ -40,6 +42,9 @@ public class LoginControllerTest {
 	@Mock
 	private ProviderService providerService;
 
+	@Mock
+	private ProviderRepository providerRepo;
+
 	private MockMvc mockMvc;
 
 	@Before
@@ -54,7 +59,6 @@ public class LoginControllerTest {
 		when(providerService.getProvidersCount()).thenReturn(mockCount);
 		mockMvc.perform(get("/")).andExpect(status().isOk())
 				.andExpect(content().string("inserted " + mockCount + " records")).andDo(print());
-
 	}
 
 	@Test
@@ -67,7 +71,7 @@ public class LoginControllerTest {
 		provider.setCountryISOCode("US");
 		provider.setBaseUrl("http://www.greatwesternbank.com/");
 		when(providerService.getProviderByName(mockProviderName)).thenReturn(provider);
-		mockMvc.perform(get("/getprovider/{providerName}", mockProviderName)).andExpect(status().isOk())
+		mockMvc.perform(get("/getprovider/{name:.*}", "{name:\"" + mockProviderName + "\"}")).andExpect(status().isOk())
 				.andExpect(content().string(mockResult)).andDo(print());
 	}
 
@@ -96,10 +100,13 @@ public class LoginControllerTest {
 		provider.setCountryISOCode("US");
 		provider.setBaseUrl("http://www.greatwesternbank.com/");
 		String mockResult = "{\"id\":\"424\",\"name\":\"Great Western Bank Test\",\"baseUrl\":\"http://www.greatwesternbank.com/\",\"countryISOCode\":\"US\"}";
+		Gson gson = new Gson();
+
 		when(providerService.getProviderByName(mockProviderDetails.getName())).thenReturn(provider);
 		when(providerService.updateProviderByName(mockBody)).thenReturn(provider);
-		mockMvc.perform(post("/provider/update").contentType(MediaType.APPLICATION_JSON)
-				.content(YodleeUtil.asJsonString(mockBody))).andExpect(status().isOk())
-				.andExpect(content().string(mockResult)).andDo(print());
+		when(providerRepo.save(provider)).thenReturn(provider);
+
+		mockMvc.perform(post("/provider/update").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(mockBody)))
+				.andExpect(status().isOk()).andExpect(content().string("")).andDo(print());
 	}
 }

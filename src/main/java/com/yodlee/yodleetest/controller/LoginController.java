@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.yodlee.yodleetest.modal.CountryGroupResult;
 import com.yodlee.yodleetest.modal.Provider;
 import com.yodlee.yodleetest.modal.UpdateProvider;
@@ -33,11 +34,13 @@ public class LoginController {
 		return "inserted " + count + " records";
 	}
 
-	@RequestMapping(value = "/getprovider/{providerName}", method = RequestMethod.GET)
-	public Provider getProviderByName(@PathVariable String providerName) {
+	@RequestMapping(value = "/getprovider/{name:.*}", method = RequestMethod.GET)
+	public Provider getProviderByName(@PathVariable String name) {
 		Provider provider = null;
 		try {
-			provider = providerService.getProviderByName(providerName);
+			Gson gson = new Gson();
+			Provider providerParam = gson.fromJson(name, Provider.class);
+			provider = providerService.getProviderByName(providerParam.getName());
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}

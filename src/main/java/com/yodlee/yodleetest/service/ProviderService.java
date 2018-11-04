@@ -80,6 +80,9 @@ public class ProviderService {
 		Provider provider;
 		try {
 			provider = providerRepo.findByName(name);
+			if(provider == null) {
+				throw new Exception("No Provider found with name" + name);
+			}
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
 		}
